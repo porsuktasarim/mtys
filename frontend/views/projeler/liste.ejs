@@ -1,0 +1,82 @@
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <div>
+    <h4 class="fw-bold mb-1"><i class="bi bi-folder2-open me-2 text-primary"></i>Projeler</h4>
+    <p class="text-muted mb-0 small">Tüm mera çalışma projeleri</p>
+  </div>
+  <a href="/projeler/yeni" class="btn btn-primary">
+    <i class="bi bi-plus-circle me-2"></i>Yeni Proje
+  </a>
+</div>
+
+<% if (projeler.length === 0) { %>
+<div class="card text-center py-5 border-dashed">
+  <div class="card-body">
+    <i class="bi bi-folder-plus display-3 text-muted opacity-25 d-block mb-3"></i>
+    <h5 class="text-muted">Henüz proje yok</h5>
+    <p class="text-muted small">Yeni bir proje oluşturarak başlayın.</p>
+    <a href="/projeler/yeni" class="btn btn-primary mt-2">Proje Oluştur</a>
+  </div>
+</div>
+<% } else { %>
+<div class="row g-3">
+  <% projeler.forEach((p, i) => { %>
+  <div class="col-md-6 col-xl-4">
+    <div class="card h-100 border-0 shadow-sm proje-card">
+      <div class="card-body p-4">
+        <div class="d-flex justify-content-between align-items-start">
+          <div class="flex-grow-1 me-2">
+            <h6 class="fw-bold mb-1"><%= p.ad %></h6>
+            <p class="text-muted small mb-0">
+              <i class="bi bi-geo-alt-fill me-1 text-danger"></i>
+              <%= p.il %> &rsaquo; <%= p.ilce %>
+            </p>
+          </div>
+          <span class="badge bg-<%= p.durum === 'tamamlandi' ? 'success' : p.durum === 'hesaplandi' ? 'primary' : 'secondary' %>">
+            <%= p.durum === 'tamamlandi' ? 'Tamamlandı' : p.durum === 'hesaplandi' ? 'Hesaplandı' : 'Taslak' %>
+          </span>
+        </div>
+
+        <hr class="my-3">
+
+        <div class="row g-2 mb-3 text-center small">
+          <div class="col-4">
+            <div class="text-muted">Yıl</div>
+            <div class="fw-semibold text-primary"><%= p.yil %></div>
+          </div>
+          <div class="col-4">
+            <div class="text-muted">Mahalleler</div>
+            <div class="fw-semibold"><%= p.mahalleler ? p.mahalleler.length : '—' %></div>
+          </div>
+          <div class="col-4">
+            <div class="text-muted">Kap. Sabiti</div>
+            <div class="fw-semibold"><%= p.meraKapasiteSabitiBBHB %> da/BBHB</div>
+          </div>
+        </div>
+
+        <div class="d-flex gap-2">
+          <a href="/projeler/<%= p._id %>" class="btn btn-sm btn-primary flex-fill">
+            <i class="bi bi-arrow-right me-1"></i>Aç
+          </a>
+          <a href="/projeler/<%= p._id %>/duzenle" class="btn btn-sm btn-outline-secondary">
+            <i class="bi bi-pencil"></i>
+          </a>
+          <form action="/projeler/<%= p._id %>?_method=DELETE" method="POST" class="d-inline"
+            onsubmit="return confirm('Bu projeyi ve tüm verilerini silmek istediğinizden emin misiniz?')">
+            <button type="submit" class="btn btn-sm btn-outline-danger">
+              <i class="bi bi-trash"></i>
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <div class="card-footer bg-transparent border-0 pt-0 pb-3 px-4">
+        <small class="text-muted">
+          <i class="bi bi-clock me-1"></i>
+          <%= new Date(p.createdAt).toLocaleDateString('tr-TR') %>
+        </small>
+      </div>
+    </div>
+  </div>
+  <% }) %>
+</div>
+<% } %>

@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <!-- Arka plan -->
+  <rect width="64" height="64" rx="12" fill="#2d6a4f"/>
+  <!-- Güneş -->
+  <circle cx="44" cy="18" r="8" fill="#d4a017" opacity="0.9"/>
+  <!-- Zemin -->
+  <ellipse cx="32" cy="52" rx="28" ry="8" fill="#1b4332"/>
+  <!-- Çimen dalgası -->
+  <path d="M4 44 Q10 36 16 44 Q22 36 28 44 Q34 36 40 44 Q46 36 52 44 Q58 36 60 44 L60 56 L4 56 Z"
+        fill="#40916c"/>
+  <!-- Büyük çimen -->
+  <path d="M14 44 Q16 30 18 44" stroke="#52b788" stroke-width="2" fill="none" stroke-linecap="round"/>
+  <path d="M24 44 Q27 28 30 44" stroke="#52b788" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+  <path d="M34 44 Q36 32 38 44" stroke="#52b788" stroke-width="2" fill="none" stroke-linecap="round"/>
+  <path d="M44 44 Q47 26 50 44" stroke="#74c69d" stroke-width="2" fill="none" stroke-linecap="round"/>
+</svg>

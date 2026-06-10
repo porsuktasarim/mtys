@@ -1,0 +1,160 @@
+<div class="row g-4">
+  <!-- Hero Banner -->
+  <div class="col-12">
+    <div class="hero-banner rounded-3 p-5 mb-2">
+      <div class="row align-items-center">
+        <div class="col-lg-8">
+          <h1 class="display-5 fw-bold text-white mb-2">
+            <i class="bi bi-tree-fill me-3"></i>Mera Tespit, Tahdit ve Tahsis Sistemi
+          </h1>
+          <p class="lead text-white-75 mb-4">
+            4342 Sayılı Mera Kanunu kapsamında mera, yaylak ve kışlakların tespit, tahdit ve tahsis çalışmalarını otomatik hesaplar; tüm yasal ekleri Excel formatında oluşturur.
+          </p>
+          <div class="d-flex gap-3 flex-wrap">
+            <a href="/projeler/yeni" class="btn btn-light btn-lg px-4">
+              <i class="bi bi-plus-circle me-2"></i>Yeni Proje Başlat
+            </a>
+            <a href="/projeler" class="btn btn-outline-light btn-lg px-4">
+              <i class="bi bi-folder2-open me-2"></i>Mevcut Projeler
+            </a>
+          </div>
+        </div>
+        <div class="col-lg-4 d-none d-lg-flex justify-content-end">
+          <div class="hero-stats">
+            <div class="stat-card text-center p-3 rounded-3 bg-white bg-opacity-15 mb-2">
+              <div class="display-6 fw-bold text-white"><%= toplamProje %></div>
+              <div class="text-white-75 small">Toplam Proje</div>
+            </div>
+            <div class="stat-card text-center p-3 rounded-3 bg-white bg-opacity-15">
+              <div class="display-6 fw-bold text-white"><%= toplamHesap %></div>
+              <div class="text-white-75 small">Tamamlanan Hesaplama</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Özellikler Kartları -->
+  <div class="col-12">
+    <h5 class="fw-semibold text-muted mb-3"><i class="bi bi-grid me-2"></i>Uygulama Özellikleri</h5>
+    <div class="row g-3">
+      <div class="col-md-4">
+        <div class="card h-100 border-0 shadow-sm feature-card">
+          <div class="card-body p-4">
+            <div class="feature-icon bg-success bg-opacity-10 text-success rounded-3 p-3 d-inline-flex mb-3">
+              <i class="bi bi-upload fs-4"></i>
+            </div>
+            <h6 class="fw-bold">Çoklu Excel Yükleme</h6>
+            <p class="text-muted small mb-0">Hayvan listesi, parsel listesi ve görevli listesini Excel/CSV formatında yükleyin. Otomatik sütun eşleştirme ile hızlı veri aktarımı.</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card h-100 border-0 shadow-sm feature-card">
+          <div class="card-body p-4">
+            <div class="feature-icon bg-primary bg-opacity-10 text-primary rounded-3 p-3 d-inline-flex mb-3">
+              <i class="bi bi-calculator fs-4"></i>
+            </div>
+            <h6 class="fw-bold">Otomatik BBHB Hesabı</h6>
+            <p class="text-muted small mb-0">Mera Yönetmeliği Madde 6'daki katsayı tablosuna göre tüm hayvan türleri için BBHB otomatik hesaplanır.</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card h-100 border-0 shadow-sm feature-card">
+          <div class="card-body p-4">
+            <div class="feature-icon bg-warning bg-opacity-10 text-warning rounded-3 p-3 d-inline-flex mb-3">
+              <i class="bi bi-file-earmark-excel fs-4"></i>
+            </div>
+            <h6 class="fw-bold">Yasal Ek Formları</h6>
+            <p class="text-muted small mb-0">Ek 4/A, 4/B, 4/C, Ek 7-7F, Ek 8, 9 ve 10 formları otomatik doldurulur ve indirilebilir Excel dosyasına aktarılır.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Son Projeler -->
+  <div class="col-12">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h5 class="fw-semibold text-muted mb-0"><i class="bi bi-clock-history me-2"></i>Son Projeler</h5>
+      <a href="/projeler" class="btn btn-sm btn-outline-secondary">Tümünü Gör</a>
+    </div>
+
+    <% if (projeler.length === 0) { %>
+    <div class="card border-dashed text-center py-5">
+      <div class="card-body">
+        <i class="bi bi-folder-plus display-4 text-muted opacity-50 mb-3 d-block"></i>
+        <h6 class="text-muted">Henüz proje oluşturulmamış</h6>
+        <p class="text-muted small mb-4">İlk projenizi oluşturarak mera çalışmalarına başlayın.</p>
+        <a href="/projeler/yeni" class="btn btn-primary">
+          <i class="bi bi-plus-circle me-2"></i>İlk Projeyi Oluştur
+        </a>
+      </div>
+    </div>
+    <% } else { %>
+    <div class="row g-3">
+      <% projeler.forEach(p => { %>
+      <div class="col-md-6 col-lg-4">
+        <div class="card border-0 shadow-sm h-100 proje-card">
+          <div class="card-body p-4">
+            <div class="d-flex justify-content-between align-items-start mb-2">
+              <h6 class="fw-bold mb-0"><%= p.ad %></h6>
+              <span class="badge bg-<%= p.durum === 'tamamlandi' ? 'success' : p.durum === 'hesaplandi' ? 'primary' : 'secondary' %> ms-2">
+                <%= p.durum === 'tamamlandi' ? 'Tamamlandı' : p.durum === 'hesaplandi' ? 'Hesaplandı' : 'Taslak' %>
+              </span>
+            </div>
+            <p class="text-muted small mb-3">
+              <i class="bi bi-geo-alt me-1"></i><%= p.il %> / <%= p.ilce %>
+              &bull; <span class="text-primary"><%= p.yil %></span>
+            </p>
+            <div class="d-flex gap-2">
+              <a href="/projeler/<%= p._id %>" class="btn btn-sm btn-primary flex-fill">
+                <i class="bi bi-arrow-right me-1"></i>Aç
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <% }) %>
+    </div>
+    <% } %>
+  </div>
+
+  <!-- BBHB Katsayı Tablosu (bilgi) -->
+  <div class="col-12">
+    <div class="card border-0 shadow-sm">
+      <div class="card-header bg-transparent border-0 pt-4 pb-0">
+        <h6 class="fw-semibold mb-0"><i class="bi bi-table me-2 text-success"></i>BBHB Katsayı Tablosu — Mera Yönetmeliği Madde 6</h6>
+      </div>
+      <div class="card-body">
+        <div class="table-responsive">
+          <table class="table table-sm table-hover mb-0">
+            <thead class="table-dark">
+              <tr>
+                <th>Hayvan Türü</th>
+                <th>Kategori</th>
+                <th class="text-end">BBHB Katsayısı</th>
+              </tr>
+            </thead>
+            <tbody class="small">
+              <tr class="table-success"><td rowspan="5"><strong>Sığır</strong></td><td>Erkek Damızlık Boğa (2 yaş+)</td><td class="text-end fw-bold">1,40</td></tr>
+              <tr><td>İnek (2 yaş+)</td><td class="text-end">1,00</td></tr>
+              <tr><td>Düve/Tosun (1-2 yaş)</td><td class="text-end">0,70</td></tr>
+              <tr><td>Buzağı (0-1 yaş)</td><td class="text-end">0,30</td></tr>
+              <tr><td colspan="2"></td></tr>
+              <tr class="table-info"><td rowspan="4"><strong>Koyun</strong></td><td>Koç (1 yaş+)</td><td class="text-end fw-bold">0,15</td></tr>
+              <tr><td>Koyun (1 yaş+)</td><td class="text-end">0,12</td></tr>
+              <tr><td>Kuzu (0-1 yaş)</td><td class="text-end">0,06</td></tr>
+              <tr><td colspan="2"></td></tr>
+              <tr class="table-warning"><td rowspan="3"><strong>Keçi</strong></td><td>Teke (1 yaş+)</td><td class="text-end fw-bold">0,14</td></tr>
+              <tr><td>Keçi (1 yaş+)</td><td class="text-end">0,12</td></tr>
+              <tr><td>Oğlak (0-1 yaş)</td><td class="text-end">0,06</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

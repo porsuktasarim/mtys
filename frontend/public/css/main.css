@@ -1,0 +1,520 @@
+/* =========================================================
+   MERA YÖNETİM SİSTEMİ — Ana Stil Dosyası
+   ========================================================= */
+
+/* ── Genel ─────────────────────────────────────────────── */
+:root {
+  --mera-yesil:       #2d6a4f;
+  --mera-yesil-ac:    #40916c;
+  --mera-yesil-cok:   #b7e4c7;
+  --mera-toprak:      #6b4226;
+  --mera-altın:       #d4a017;
+  --mera-bej:         #f8f4ec;
+  --sidebar-bg:       #1b4332;
+  --card-shadow:      0 2px 12px rgba(0,0,0,.08);
+  --radius:           .6rem;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f4f6f4;
+  color: #2c3e2d;
+}
+
+a { color: var(--mera-yesil-ac); }
+a:hover { color: var(--mera-yesil); }
+
+/* ── Navbar ─────────────────────────────────────────────── */
+.navbar-mera {
+  background: linear-gradient(135deg, var(--mera-yesil) 0%, var(--mera-yesil-ac) 100%);
+  box-shadow: 0 2px 8px rgba(0,0,0,.15);
+}
+
+.navbar-mera .navbar-brand {
+  font-weight: 700;
+  font-size: 1.2rem;
+  letter-spacing: .3px;
+}
+
+.navbar-mera .nav-link {
+  color: rgba(255,255,255,.85) !important;
+  font-weight: 500;
+  transition: color .2s;
+}
+
+.navbar-mera .nav-link:hover,
+.navbar-mera .nav-link.active {
+  color: #fff !important;
+}
+
+/* ── Hero Banner ────────────────────────────────────────── */
+.hero-banner {
+  background: linear-gradient(160deg, var(--mera-yesil) 0%, #1b4332 50%, #081c15 100%);
+  color: #fff;
+  padding: 5rem 0 4rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-banner::before {
+  content: '';
+  position: absolute;
+  top: -40%;
+  right: -10%;
+  width: 600px;
+  height: 600px;
+  background: radial-gradient(circle, rgba(64,145,108,.25) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.hero-banner .hero-title {
+  font-size: clamp(1.6rem, 4vw, 2.6rem);
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.hero-banner .hero-subtitle {
+  font-size: 1.05rem;
+  opacity: .85;
+  max-width: 560px;
+}
+
+.hero-badge {
+  display: inline-block;
+  background: rgba(255,255,255,.12);
+  border: 1px solid rgba(255,255,255,.25);
+  border-radius: 50px;
+  padding: .25rem .9rem;
+  font-size: .78rem;
+  font-weight: 600;
+  letter-spacing: .5px;
+  text-transform: uppercase;
+  margin-bottom: 1rem;
+}
+
+.text-white-75 { color: rgba(255,255,255,.75) !important; }
+
+/* ── Kartlar ────────────────────────────────────────────── */
+.feature-card {
+  background: #fff;
+  border: 1px solid #e8ede9;
+  border-radius: var(--radius);
+  padding: 1.5rem;
+  transition: transform .2s, box-shadow .2s;
+  height: 100%;
+}
+
+.feature-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(0,0,0,.10);
+}
+
+.feature-card .feature-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background: var(--mera-yesil-cok);
+  color: var(--mera-yesil);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.3rem;
+  margin-bottom: 1rem;
+}
+
+.proje-card {
+  background: #fff;
+  border: 1px solid #e8ede9;
+  border-radius: var(--radius);
+  transition: transform .2s, box-shadow .2s;
+  overflow: hidden;
+}
+
+.proje-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--card-shadow);
+}
+
+.proje-card .card-header-mera {
+  background: linear-gradient(90deg, var(--mera-yesil) 0%, var(--mera-yesil-ac) 100%);
+  color: #fff;
+  padding: .75rem 1rem;
+  font-weight: 600;
+  font-size: .95rem;
+}
+
+/* ── Adım Göstergesi ────────────────────────────────────── */
+.step-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  margin-bottom: 2rem;
+}
+
+.step-badge {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: .3rem;
+  position: relative;
+}
+
+.step-badge .step-circle {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: #dee2e6;
+  color: #6c757d;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: .95rem;
+  transition: background .3s, color .3s;
+  border: 2px solid #dee2e6;
+}
+
+.step-badge .step-label {
+  font-size: .72rem;
+  color: #6c757d;
+  text-align: center;
+  max-width: 80px;
+  line-height: 1.2;
+}
+
+.step-badge.active .step-circle {
+  background: var(--mera-yesil);
+  color: #fff;
+  border-color: var(--mera-yesil);
+}
+
+.step-badge.active .step-label { color: var(--mera-yesil); font-weight: 600; }
+
+.step-badge.completed .step-circle {
+  background: var(--mera-yesil-ac);
+  color: #fff;
+  border-color: var(--mera-yesil-ac);
+}
+
+.step-connector {
+  flex: 1;
+  height: 2px;
+  background: #dee2e6;
+  max-width: 80px;
+  margin-bottom: 1.5rem;
+}
+
+.step-connector.done { background: var(--mera-yesil-ac); }
+
+/* ── Yükleme Alanı ──────────────────────────────────────── */
+.upload-zone {
+  border: 2px dashed #adb5bd;
+  border-radius: var(--radius);
+  background: #fafafa;
+  transition: border-color .2s, background .2s;
+  cursor: pointer;
+}
+
+.upload-zone:hover,
+.upload-zone.drag-over {
+  border-color: var(--mera-yesil);
+  background: #f0faf4;
+}
+
+.upload-zone .upload-icon {
+  font-size: 2.5rem;
+  color: #adb5bd;
+  transition: color .2s;
+}
+
+.upload-zone:hover .upload-icon,
+.upload-zone.drag-over .upload-icon {
+  color: var(--mera-yesil);
+}
+
+.upload-label {
+  display: block;
+  cursor: pointer;
+  padding: 2rem 1.5rem;
+  text-align: center;
+}
+
+.border-dashed {
+  border-style: dashed !important;
+}
+
+/* ── Eşleştirme Tablosu ─────────────────────────────────── */
+.mapping-row {
+  background: #fff;
+  border: 1px solid #e9ecef;
+  border-radius: .4rem;
+  padding: .75rem 1rem;
+  margin-bottom: .5rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.mapping-row .field-name {
+  font-weight: 600;
+  font-size: .85rem;
+  min-width: 160px;
+  color: var(--mera-yesil);
+}
+
+.mapping-row .field-required::after {
+  content: ' *';
+  color: #dc3545;
+}
+
+/* ── İstatistik Kartları ────────────────────────────────── */
+.stat-card {
+  background: #fff;
+  border-radius: var(--radius);
+  padding: 1.25rem 1.5rem;
+  border: 1px solid #e8ede9;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.stat-card .stat-icon {
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  flex-shrink: 0;
+}
+
+.stat-card .stat-value {
+  font-size: 1.8rem;
+  font-weight: 800;
+  line-height: 1;
+  color: #1a2e1b;
+}
+
+.stat-card .stat-label {
+  font-size: .78rem;
+  color: #6c757d;
+  margin-top: .2rem;
+}
+
+/* ── Tablolar ───────────────────────────────────────────── */
+.table-mera thead th {
+  background: var(--mera-yesil);
+  color: #fff;
+  font-weight: 600;
+  font-size: .82rem;
+  text-transform: uppercase;
+  letter-spacing: .4px;
+  border: none;
+  padding: .65rem .75rem;
+}
+
+.table-mera tbody tr:hover { background: #f0faf4; }
+
+.table-mera tfoot td {
+  background: #e9f5ee;
+  font-weight: 700;
+  border-top: 2px solid var(--mera-yesil);
+}
+
+/* ── Hesaplama Sonuçları ────────────────────────────────── */
+.sonuc-badge {
+  padding: .4rem .9rem;
+  border-radius: 50px;
+  font-size: .8rem;
+  font-weight: 700;
+}
+
+.sonuc-fazla {
+  background: #fef3cd;
+  color: #856404;
+}
+
+.sonuc-acik {
+  background: #d1e7dd;
+  color: #0a3622;
+}
+
+.sonuc-dengeli {
+  background: #cff4fc;
+  color: #055160;
+}
+
+/* ── Buttons ────────────────────────────────────────────── */
+.btn-mera {
+  background: linear-gradient(135deg, var(--mera-yesil) 0%, var(--mera-yesil-ac) 100%);
+  color: #fff;
+  border: none;
+  font-weight: 600;
+  border-radius: .45rem;
+  transition: opacity .2s, transform .1s;
+}
+
+.btn-mera:hover {
+  color: #fff;
+  opacity: .92;
+  transform: translateY(-1px);
+}
+
+.btn-mera:active { transform: translateY(0); }
+
+.btn-xs {
+  padding: .2rem .5rem;
+  font-size: .75rem;
+  border-radius: .3rem;
+}
+
+/* ── Cursor ──────────────────────────────────────────────── */
+.cursor-pointer { cursor: pointer; }
+
+/* ── BBHB Tablosu ───────────────────────────────────────── */
+.bbhb-table {
+  font-size: .82rem;
+}
+
+.bbhb-table thead th {
+  background: #1b4332;
+  color: #fff;
+  padding: .5rem .75rem;
+}
+
+.bbhb-table tbody tr:nth-child(even) { background: #f0faf4; }
+
+/* ── Sidebar Mahalle Listesi ────────────────────────────── */
+.mahalle-sidebar {
+  background: #fff;
+  border: 1px solid #e8ede9;
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.mahalle-sidebar .sidebar-header {
+  background: var(--mera-yesil);
+  color: #fff;
+  padding: .75rem 1rem;
+  font-weight: 600;
+  font-size: .9rem;
+}
+
+.mahalle-item {
+  display: flex;
+  align-items: center;
+  padding: .6rem 1rem;
+  border-bottom: 1px solid #f0f0f0;
+  transition: background .15s;
+  cursor: pointer;
+  text-decoration: none;
+  color: inherit;
+}
+
+.mahalle-item:hover { background: #f0faf4; color: var(--mera-yesil); }
+.mahalle-item.active { background: #e8f5ec; color: var(--mera-yesil); font-weight: 600; }
+
+/* ── Loader / Spinner ───────────────────────────────────── */
+.loading-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(255,255,255,.75);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  backdrop-filter: blur(2px);
+}
+
+.spinner-mera {
+  width: 3rem;
+  height: 3rem;
+  border: 4px solid #b7e4c7;
+  border-top-color: var(--mera-yesil);
+  border-radius: 50%;
+  animation: spin .7s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── Ek Sekmeler ────────────────────────────────────────── */
+.nav-tabs-mera .nav-link {
+  color: #495057;
+  border-radius: .45rem .45rem 0 0;
+  font-size: .85rem;
+  font-weight: 500;
+  padding: .5rem .9rem;
+}
+
+.nav-tabs-mera .nav-link.active {
+  background: var(--mera-yesil);
+  color: #fff;
+  border-color: var(--mera-yesil);
+}
+
+/* ── Dosya Yükleme Önizleme ─────────────────────────────── */
+.file-preview-item {
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+  background: #f0faf4;
+  border: 1px solid #b7e4c7;
+  border-radius: .45rem;
+  padding: .6rem 1rem;
+  margin-bottom: .5rem;
+}
+
+.file-preview-item .file-icon { font-size: 1.4rem; color: var(--mera-yesil); }
+.file-preview-item .file-name { font-weight: 600; font-size: .9rem; }
+.file-preview-item .file-size { font-size: .75rem; color: #6c757d; }
+
+/* ── Proje Durum Rozeti ──────────────────────────────────── */
+.durum-badge {
+  font-size: .72rem;
+  font-weight: 700;
+  padding: .25rem .6rem;
+  border-radius: 50px;
+  text-transform: uppercase;
+  letter-spacing: .4px;
+}
+
+.durum-aktif   { background: #d1e7dd; color: #0a3622; }
+.durum-taslak  { background: #fff3cd; color: #664d03; }
+.durum-tamamlandi { background: #cfe2ff; color: #084298; }
+
+/* ── Alert Özelleştirme ──────────────────────────────────── */
+.alert-mera {
+  border-left: 4px solid var(--mera-yesil);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  background: #f0faf4;
+  color: #1b4332;
+}
+
+/* ── Footer ──────────────────────────────────────────────── */
+.footer-mera {
+  background: #1b4332;
+  color: rgba(255,255,255,.7);
+  padding: 1.5rem 0;
+  font-size: .82rem;
+  margin-top: 4rem;
+}
+
+.footer-mera a { color: rgba(255,255,255,.8); text-decoration: none; }
+.footer-mera a:hover { color: #fff; }
+
+/* ── Responsive ──────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .hero-banner { padding: 3rem 0 2.5rem; }
+  .step-connector { max-width: 40px; }
+  .stat-card { padding: .9rem 1rem; }
+  .stat-card .stat-value { font-size: 1.4rem; }
+}
+
+/* ── Yazdırma ────────────────────────────────────────────── */
+@media print {
+  .navbar-mera, .footer-mera, .btn, .upload-zone { display: none !important; }
+  .table-mera thead th { background: #333 !important; -webkit-print-color-adjust: exact; }
+}

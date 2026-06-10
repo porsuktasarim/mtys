@@ -1,0 +1,295 @@
+<div class="mb-4">
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb small mb-1">
+      <li class="breadcrumb-item"><a href="/projeler">Projeler</a></li>
+      <li class="breadcrumb-item"><a href="/projeler/<%= proje._id %>"><%= proje.ad %></a></li>
+      <li class="breadcrumb-item active">Hesaplama: <%= hesaplama.mahalle %></li>
+    </ol>
+  </nav>
+  <div class="d-flex justify-content-between align-items-start flex-wrap gap-3">
+    <div>
+      <h4 class="fw-bold mb-1">
+        <i class="bi bi-calculator me-2 text-primary"></i><%= hesaplama.mahalle %> Hesaplama Sonuçları
+      </h4>
+      <p class="text-muted small mb-0">
+        <i class="bi bi-clock me-1"></i>
+        <%= new Date(hesaplama.hesaplamaTarihi).toLocaleDateString('tr-TR', {day:'2-digit', month:'long', year:'numeric', hour:'2-digit', minute:'2-digit'}) %>
+      </p>
+    </div>
+    <a href="/export/<%= proje._id %>/<%= encodeURIComponent(hesaplama.mahalle) %>" class="btn btn-success">
+      <i class="bi bi-file-earmark-excel me-2"></i>Excel İndir (Tüm Ekler)
+    </a>
+  </div>
+</div>
+
+<!-- Özet Kartlar -->
+<div class="row g-3 mb-4">
+  <div class="col-6 col-lg-3">
+    <div class="card border-0 shadow-sm text-center p-3">
+      <div class="display-6 fw-bold text-success"><%= (hesaplama.ek4a?.genelToplamBBHB || 0).toFixed(2) %></div>
+      <div class="small text-muted mt-1">Toplam BBHB (Mevcut)</div>
+    </div>
+  </div>
+  <div class="col-6 col-lg-3">
+    <div class="card border-0 shadow-sm text-center p-3">
+      <div class="display-6 fw-bold text-primary"><%= (hesaplama.ek4b?.toplamKapasite || 0).toFixed(2) %></div>
+      <div class="small text-muted mt-1">Mera Kapasitesi (BBHB)</div>
+    </div>
+  </div>
+  <div class="col-6 col-lg-3">
+    <div class="card border-0 shadow-sm text-center p-3">
+      <div class="display-6 fw-bold text-info"><%= (hesaplama.ek4b?.toplamAlan || 0).toFixed(1) %></div>
+      <div class="small text-muted mt-1">Toplam Mera Alanı (Da)</div>
+    </div>
+  </div>
+  <div class="col-6 col-lg-3">
+    <div class="card border-0 shadow-sm text-center p-3">
+      <div class="display-6 fw-bold text-<%= (hesaplama.ek4c?.durum === 'fazla') ? 'success' : 'danger' %>">
+        <%= (hesaplama.ek4c?.fark || 0).toFixed(2) %>
+      </div>
+      <div class="small text-muted mt-1">
+        Fark (BBHB) &mdash;
+        <span class="badge bg-<%= (hesaplama.ek4c?.durum === 'fazla') ? 'success' : 'danger' %>">
+          <%= hesaplama.ek4c?.durum === 'fazla' ? 'Yeterli' : 'Aşım' %>
+        </span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Sekmeli Detay -->
+<div class="card border-0 shadow-sm">
+  <div class="card-header border-0 bg-transparent pt-3 pb-0">
+    <ul class="nav nav-tabs" id="ekTabs">
+      <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" href="#ek4a">Ek 4/A — BBHB</a></li>
+      <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#ek4b">Ek 4/B — Kapasite</a></li>
+      <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#ek7">Ek 7 — Çiftçiler</a></li>
+      <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#ek7c">Ek 7/C — Komisyon</a></li>
+    </ul>
+  </div>
+  <div class="card-body p-0">
+    <div class="tab-content">
+      <!-- Ek 4/A -->
+      <div class="tab-pane fade show active p-4" id="ek4a">
+        <h6 class="fw-semibold mb-3 text-muted">Ek 4/A — Büyükbaş Hayvan Birimi Hesabı</h6>
+        <div class="table-responsive">
+          <table class="table table-sm table-hover align-middle small">
+            <thead class="table-dark">
+              <tr>
+                <th>Sıra</th><th>TC Kimlik</th><th>Çiftçi</th>
+                <th>Hayvan Türü</th><th class="text-center">Adet</th>
+                <th class="text-end">Katsayı</th><th class="text-end">BBHB</th>
+                <th class="text-end fw-bold">Toplam BBHB</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% let sira = 1; (hesaplama.ek4a?.ciftciler || []).forEach(c => {
+                const satirSayisi = (c.hayvanlar || []).length || 1;
+              %>
+              <% (c.hayvanlar || []).forEach((h, idx) => { %>
+              <tr class="<%= idx % 2 === 0 ? '' : 'table-light' %>">
+                <% if (idx === 0) { %>
+                <td rowspan="<%= satirSayisi %>" class="fw-bold text-center"><%= sira++ %></td>
+                <td rowspan="<%= satirSayisi %>" class="font-monospace small"><%= c.tcKimlikNo %></td>
+                <td rowspan="<%= satirSayisi %>" class="fw-semibold"><%= c.adSoyad %></td>
+                <% } %>
+                <td><%= h.tur %></td>
+                <td class="text-center"><%= h.adet %></td>
+                <td class="text-end"><%= h.katsayi?.toFixed(2) %></td>
+                <td class="text-end"><%= h.toplamBBHB?.toFixed(4) %></td>
+                <% if (idx === 0) { %>
+                <td rowspan="<%= satirSayisi %>" class="text-end fw-bold text-success">
+                  <%= c.toplamBBHB?.toFixed(4) %>
+                </td>
+                <% } %>
+              </tr>
+              <% }); }); %>
+            </tbody>
+            <tfoot>
+              <tr class="table-warning fw-bold">
+                <td colspan="7" class="text-end">GENEL TOPLAM</td>
+                <td class="text-end text-success fs-6"><%= (hesaplama.ek4a?.genelToplamBBHB || 0).toFixed(4) %></td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      </div>
+
+      <!-- Ek 4/B -->
+      <div class="tab-pane fade p-4" id="ek4b">
+        <h6 class="fw-semibold mb-3 text-muted">Ek 4/B — Mera-Çayır Varlığı ve Kapasitesi</h6>
+        <div class="table-responsive">
+          <table class="table table-sm table-hover small">
+            <thead class="table-dark">
+              <tr>
+                <th>Sıra</th><th>Ada/Parsel</th><th>Mevkii</th>
+                <th>Vasıf</th><th class="text-end">Alan (Da)</th>
+                <th class="text-end">Kapasite (BBHB)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% (hesaplama.ek4b?.parseller || []).forEach((p, i) => { %>
+              <tr>
+                <td><%= i+1 %></td>
+                <td class="font-monospace"><%= p.adaParsel || `${p.adaNo||''}/${p.parselNo}` %></td>
+                <td><%= p.mevkii || '—' %></td>
+                <td><span class="badge bg-success bg-opacity-10 text-success border border-success"><%= p.vasfi || p.araziVasfi %></span></td>
+                <td class="text-end"><%= Number(p.alan || 0).toFixed(2) %></td>
+                <td class="text-end fw-semibold text-primary"><%= Number(p.kapasite || 0).toFixed(4) %></td>
+              </tr>
+              <% }); %>
+            </tbody>
+            <tfoot>
+              <tr class="table-success fw-bold">
+                <td colspan="4" class="text-end">TOPLAM</td>
+                <td class="text-end"><%= (hesaplama.ek4b?.toplamAlan || 0).toFixed(2) %> Da</td>
+                <td class="text-end text-primary"><%= (hesaplama.ek4b?.toplamKapasite || 0).toFixed(4) %> BBHB</td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+
+        <div class="row g-3 mt-2">
+          <% [['meraAlani','Mera','success'],['cayirAlani','Çayır','info'],['yaylakAlani','Yaylak','warning'],['kislakAlani','Kışlak','secondary']].forEach(([key, label, color]) => { %>
+          <div class="col-6 col-md-3">
+            <div class="card bg-<%= color %> bg-opacity-10 border-0 text-center p-3">
+              <div class="fw-bold text-<%= color %>"><%= (hesaplama.ek4b?.[key] || 0).toFixed(2) %> Da</div>
+              <div class="small text-muted"><%= label %> Alanı</div>
+            </div>
+          </div>
+          <% }); %>
+        </div>
+      </div>
+
+      <!-- Ek 7 -->
+      <div class="tab-pane fade p-4" id="ek7">
+        <h6 class="fw-semibold mb-3 text-muted">Ek 7 — Çiftçi Aileleri Listesi</h6>
+        <div class="table-responsive">
+          <table class="table table-sm table-hover small">
+            <thead class="table-dark">
+              <tr>
+                <th>Sıra</th><th>Adı Soyadı</th><th>TC Kimlik No</th>
+                <th class="text-end">BBHB</th><th class="text-end">Hayvan Sayısı</th>
+                <th class="text-end">Pay (%)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% const topBBHB = hesaplama.ek4a?.genelToplamBBHB || 1;
+                 (hesaplama.ek7?.ciftciler || []).forEach(c => { %>
+              <tr>
+                <td><%= c.siraNo %></td>
+                <td class="fw-semibold"><%= c.adSoyad %></td>
+                <td class="font-monospace"><%= c.tcKimlikNo %></td>
+                <td class="text-end"><%= Number(c.bbhb || 0).toFixed(4) %></td>
+                <td class="text-end"><%= c.hayvanSayisi %></td>
+                <td class="text-end">
+                  <div class="d-flex align-items-center justify-content-end gap-2">
+                    <div class="progress flex-grow-1" style="height:6px;width:80px;">
+                      <div class="progress-bar bg-primary" style="width:<%= ((c.bbhb/topBBHB)*100).toFixed(1) %>%"></div>
+                    </div>
+                    <%= ((c.bbhb/topBBHB)*100).toFixed(1) %>%
+                  </div>
+                </td>
+              </tr>
+              <% }); %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Ek 7/C Hayvan Varlığı Tablosu -->
+      <div class="tab-pane fade" id="ek7c">
+        <h6 class="fw-semibold mb-1 p-3 pb-0">Ek 7/C — Çiftçi Ailelerinin Hayvan Varlığı</h6>
+        <p class="text-muted small px-3 mb-2">Her çiftçi için tür ve ırk bazında hayvan sayısı ve BBHB toplamı</p>
+
+        <% const ek7c = hesaplama.ek7c || {}; %>
+        <% const sutunlar = ek7c.sutunlar || []; %>
+        <% const ciftciler = ek7c.ciftciler || []; %>
+        <% const toplam = ek7c.toplam || {}; %>
+
+        <div class="table-responsive" style="font-size:11px;">
+          <table class="table table-bordered table-hover mb-0 align-middle" style="min-width:900px;">
+            <thead>
+              <!-- Grup başlıkları -->
+              <tr style="background:#1b4332;color:#fff;">
+                <th rowspan="2" class="text-center align-middle" style="width:40px;">Sıra</th>
+                <th rowspan="2" class="align-middle" style="min-width:160px;">Adı Soyadı / Çiftçi Ailesi</th>
+                <th colspan="2" class="text-center">Kültür</th>
+                <th colspan="2" class="text-center">Kültür Melezi</th>
+                <th colspan="2" class="text-center">Yerli</th>
+                <th colspan="3" class="text-center">Küçükbaş</th>
+                <th colspan="2" class="text-center">Manda</th>
+                <th colspan="2" class="text-center">Erkek Sığır</th>
+                <th colspan="3" class="text-center">Diğer</th>
+                <th rowspan="2" class="text-center align-middle" style="background:#2d6a4f;">BBHB<br>TOPLAM</th>
+              </tr>
+              <!-- Alt başlıklar -->
+              <tr style="background:#2d6a4f;color:#fff;">
+                <% sutunlar.forEach(s => { %>
+                <th class="text-center" style="font-size:10px;white-space:nowrap;"><%= s.label %></th>
+                <% }); %>
+              </tr>
+              <!-- Katsayı satırı -->
+              <tr style="background:#f0faf4;font-style:italic;color:#555;">
+                <td></td><td style="font-size:10px;">Katsayı →</td>
+                <% sutunlar.forEach(s => { %>
+                <td class="text-center" style="font-size:10px;"><%= s.katsayi.toFixed(2) %></td>
+                <% }); %>
+                <td></td>
+              </tr>
+            </thead>
+            <tbody>
+              <% ciftciler.forEach(c => { %>
+              <tr>
+                <td class="text-center"><%= c.siraNo %></td>
+                <td class="fw-semibold">
+                  <% if (c.firmaFlag) { %><span class="badge bg-warning text-dark me-1" style="font-size:9px;">Firma</span><% } %>
+                  <%= c.adSoyad %>
+                </td>
+                <% sutunlar.forEach(s => { %>
+                <td class="text-center <%= (c[s.key] || 0) > 0 ? 'fw-semibold text-success' : 'text-muted' %>">
+                  <%= c[s.key] || 0 %>
+                </td>
+                <% }); %>
+                <td class="text-center fw-bold" style="background:#e8f5e9;"><%= c.bbhbToplam.toFixed(2) %></td>
+              </tr>
+              <% }); %>
+            </tbody>
+            <tfoot>
+              <tr style="background:#1b4332;color:#fff;font-weight:bold;">
+                <td></td>
+                <td>TOPLAM</td>
+                <% sutunlar.forEach(s => { %>
+                <td class="text-center"><%= toplam[s.key] || 0 %></td>
+                <% }); %>
+                <td class="text-center"><%= toplam.bbhbToplam ? toplam.bbhbToplam.toFixed(2) : '0.00' %></td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+
+        <!-- Görevliler -->
+        <% if ((ek7c.gorevliler || []).length > 0) { %>
+        <div class="p-3 mt-3">
+          <h6 class="fw-semibold mb-2 small">Komisyon Üyeleri</h6>
+          <table class="table table-sm small" style="max-width:600px;">
+            <thead class="table-dark">
+              <tr><th>Sıra</th><th>Adı Soyadı</th><th>Unvanı</th><th>Görevi</th></tr>
+            </thead>
+            <tbody>
+              <% (ek7c.gorevliler || []).forEach((g, i) => { %>
+              <tr>
+                <td><%= i+1 %></td>
+                <td class="fw-semibold"><%= g.adSoyad %></td>
+                <td><%= g.unvan %></td>
+                <td><%= g.gorev || '—' %></td>
+              </tr>
+              <% }); %>
+            </tbody>
+          </table>
+        </div>
+        <% } %>
+      </div>
+    </div>
+  </div>
+</div>

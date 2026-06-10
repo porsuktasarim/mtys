@@ -1,0 +1,393 @@
+<div class="mb-4">
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb small mb-1">
+      <li class="breadcrumb-item"><a href="/projeler">Projeler</a></li>
+      <li class="breadcrumb-item"><a href="/projeler/<%= proje._id %>"><%= proje.ad %></a></li>
+      <li class="breadcrumb-item active">Veri Yükleme</li>
+    </ol>
+  </nav>
+  <h4 class="fw-bold mb-1"><i class="bi bi-upload me-2 text-primary"></i>Excel Dosyaları Yükleme</h4>
+  <p class="text-muted small">Hayvan listesi, parsel listesi ve görevli listesi Excel/CSV dosyalarını yükleyin.</p>
+</div>
+
+<!-- Adım Göstergesi -->
+<div class="d-flex align-items-center mb-4 gap-2 flex-wrap">
+  <div class="step-badge active" id="step1badge">
+    <span class="step-num">1</span><span class="step-text ms-2">Dosya Seçimi</span>
+  </div>
+  <i class="bi bi-chevron-right text-muted"></i>
+  <div class="step-badge" id="step2badge">
+    <span class="step-num">2</span><span class="step-text ms-2">Sütun Eşleştirme</span>
+  </div>
+  <i class="bi bi-chevron-right text-muted"></i>
+  <div class="step-badge" id="step3badge">
+    <span class="step-num">3</span><span class="step-text ms-2">Onay & Kayıt</span>
+  </div>
+</div>
+
+<!-- ADIM 1: Dosya Yükleme -->
+<div id="step1" class="step-content">
+  <form id="uploadForm" enctype="multipart/form-data">
+    <div class="row g-4">
+      <!-- Hayvan Listesi -->
+      <div class="col-md-4">
+        <div class="card border-0 shadow-sm h-100">
+          <div class="card-header border-0 pt-4 pb-0 bg-transparent">
+            <div class="d-flex align-items-center gap-2 mb-1">
+              <div class="rounded-3 bg-success bg-opacity-10 text-success p-2">
+                <i class="bi bi-emoji-smile fs-5"></i>
+              </div>
+              <div>
+                <h6 class="fw-bold mb-0">Hayvan Listesi</h6>
+                <small class="text-muted">Büyükbaş/Küçükbaş</small>
+              </div>
+            </div>
+          </div>
+          <div class="card-body p-4">
+            <div class="upload-zone" id="hayvanZone">
+              <input type="file" name="hayvanListesi" id="hayvanInput" multiple
+                accept=".xlsx,.xls,.csv" class="d-none">
+              <label for="hayvanInput" class="upload-label d-block text-center p-4 cursor-pointer">
+                <i class="bi bi-file-earmark-excel display-5 text-success opacity-50 d-block mb-2"></i>
+                <span class="fw-semibold small">Dosyaları seçin veya sürükleyin</span><br>
+                <span class="text-muted" style="font-size:11px">.xlsx, .xls, .csv (Birden fazla dosya seçilebilir)</span>
+              </label>
+            </div>
+            <div id="hayvanDosyaListesi" class="mt-2 small"></div>
+
+            <!-- Zorunlu Alanlar -->
+            <div class="mt-3">
+              <p class="text-muted small mb-1 fw-semibold">Gerekli Sütunlar:</p>
+              <div class="d-flex flex-wrap gap-1">
+                <span class="badge bg-light text-dark border small">Küpe No</span>
+                <span class="badge bg-light text-dark border small">Tür</span>
+                <span class="badge bg-light text-dark border small">TC Kimlik</span>
+                <span class="badge bg-light text-dark border small">Mahalle</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Parsel Listesi -->
+      <div class="col-md-4">
+        <div class="card border-0 shadow-sm h-100">
+          <div class="card-header border-0 pt-4 pb-0 bg-transparent">
+            <div class="d-flex align-items-center gap-2 mb-1">
+              <div class="rounded-3 bg-primary bg-opacity-10 text-primary p-2">
+                <i class="bi bi-map fs-5"></i>
+              </div>
+              <div>
+                <h6 class="fw-bold mb-0">Parsel Listesi</h6>
+                <small class="text-muted">Mera/Çayır/Yaylak</small>
+              </div>
+            </div>
+          </div>
+          <div class="card-body p-4">
+            <div class="upload-zone" id="parselZone">
+              <input type="file" name="parselListesi" id="parselInput" multiple
+                accept=".xlsx,.xls,.csv" class="d-none">
+              <label for="parselInput" class="upload-label d-block text-center p-4 cursor-pointer">
+                <i class="bi bi-file-earmark-excel display-5 text-primary opacity-50 d-block mb-2"></i>
+                <span class="fw-semibold small">Dosyaları seçin veya sürükleyin</span><br>
+                <span class="text-muted" style="font-size:11px">.xlsx, .xls, .csv</span>
+              </label>
+            </div>
+            <div id="parselDosyaListesi" class="mt-2 small"></div>
+
+            <div class="mt-3">
+              <p class="text-muted small mb-1 fw-semibold">Gerekli Sütunlar:</p>
+              <div class="d-flex flex-wrap gap-1">
+                <span class="badge bg-light text-dark border small">Parsel No</span>
+                <span class="badge bg-light text-dark border small">Yüzölçümü</span>
+                <span class="badge bg-light text-dark border small">Vasıf</span>
+                <span class="badge bg-light text-dark border small">Mahalle</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Görevli Listesi -->
+      <div class="col-md-4">
+        <div class="card border-0 shadow-sm h-100">
+          <div class="card-header border-0 pt-4 pb-0 bg-transparent">
+            <div class="d-flex align-items-center gap-2 mb-1">
+              <div class="rounded-3 bg-warning bg-opacity-10 text-warning p-2">
+                <i class="bi bi-people fs-5"></i>
+              </div>
+              <div>
+                <h6 class="fw-bold mb-0">Görevli Listesi</h6>
+                <small class="text-muted">Komisyon Üyeleri</small>
+              </div>
+            </div>
+          </div>
+          <div class="card-body p-4">
+            <div class="upload-zone" id="gorevliZone">
+              <input type="file" name="gorevliListesi" id="gorevliInput" multiple
+                accept=".xlsx,.xls,.csv" class="d-none">
+              <label for="gorevliInput" class="upload-label d-block text-center p-4 cursor-pointer">
+                <i class="bi bi-file-earmark-excel display-5 text-warning opacity-50 d-block mb-2"></i>
+                <span class="fw-semibold small">Dosyaları seçin veya sürükleyin</span><br>
+                <span class="text-muted" style="font-size:11px">.xlsx, .xls, .csv</span>
+              </label>
+            </div>
+            <div id="gorevliDosyaListesi" class="mt-2 small"></div>
+
+            <div class="mt-3">
+              <p class="text-muted small mb-1 fw-semibold">Gerekli Sütunlar:</p>
+              <div class="d-flex flex-wrap gap-1">
+                <span class="badge bg-light text-dark border small">Ad Soyad</span>
+                <span class="badge bg-light text-dark border small">Unvan</span>
+                <span class="badge bg-light text-dark border small">Görev</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-4 text-center">
+      <button type="button" id="btnYukle" class="btn btn-primary btn-lg px-5" onclick="dosyalariYukle()">
+        <i class="bi bi-cloud-upload me-2"></i>Dosyaları Yükle ve Sütunları Analiz Et
+      </button>
+    </div>
+  </form>
+</div>
+
+<!-- ADIM 2: Sütun Eşleştirme -->
+<div id="step2" class="step-content d-none">
+  <div id="eslestirmeAlani"></div>
+
+  <div class="text-center mt-4">
+    <button type="button" class="btn btn-outline-secondary me-3" onclick="geriDon(1)">
+      <i class="bi bi-arrow-left me-2"></i>Geri
+    </button>
+    <button type="button" class="btn btn-primary btn-lg px-5" onclick="eslestirmeOnayla()">
+      <i class="bi bi-check-circle me-2"></i>Eşleştirmeyi Onayla ve İlerle
+    </button>
+  </div>
+</div>
+
+<!-- ADIM 3: Onay -->
+<div id="step3" class="step-content d-none">
+  <div class="card border-0 shadow-sm">
+    <div class="card-body text-center p-5">
+      <div id="kayitDurumu">
+        <div class="spinner-border text-primary mb-3" role="status"></div>
+        <h5>Veriler kaydediliyor...</h5>
+      </div>
+      <div id="kayitSonucu" class="d-none">
+        <i class="bi bi-check-circle-fill text-success display-3 mb-3 d-block"></i>
+        <h5 class="fw-bold" id="kayitBaslik">Veriler Başarıyla Kaydedildi</h5>
+        <p class="text-muted" id="kayitDetay"></p>
+        <a href="/projeler/<%= proje._id %>" class="btn btn-success btn-lg px-5 mt-2">
+          <i class="bi bi-arrow-right me-2"></i>Projeye Git ve Hesaplama Yap
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Yükleme Progress Modal -->
+<div class="modal fade" id="yuklemeModal" tabindex="-1" data-bs-backdrop="static">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-body text-center p-5">
+        <div class="spinner-border text-primary mb-3" role="status" style="width:3rem;height:3rem;"></div>
+        <h5 class="fw-semibold">Dosyalar Yükleniyor...</h5>
+        <p class="text-muted small">Sütunlar analiz ediliyor, lütfen bekleyin.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const PROYE_ID = '<%= proje._id %>';
+let yuklenenDosyaBilgileri = null;
+
+// Dosya listesi güncelle
+['hayvan', 'parsel', 'gorevli'].forEach(tip => {
+  const input = document.getElementById(`${tip}Input`);
+  const liste = document.getElementById(`${tip}DosyaListesi`);
+  input?.addEventListener('change', () => {
+    liste.innerHTML = [...input.files].map(f =>
+      `<div class="d-flex align-items-center gap-1 py-1">
+        <i class="bi bi-file-excel text-success"></i>
+        <span class="text-truncate">${f.name}</span>
+        <span class="text-muted ms-auto">(${(f.size/1024).toFixed(0)}KB)</span>
+      </div>`
+    ).join('');
+  });
+});
+
+async function dosyalariYukle() {
+  const form = document.getElementById('uploadForm');
+  const formData = new FormData(form);
+
+  const hayvanFiles = document.getElementById('hayvanInput').files;
+  const parselFiles = document.getElementById('parselInput').files;
+
+  if (hayvanFiles.length === 0 && parselFiles.length === 0) {
+    alert('Lütfen en az hayvan listesi veya parsel listesi yükleyin.');
+    return;
+  }
+
+  const modal = new bootstrap.Modal(document.getElementById('yuklemeModal'));
+  modal.show();
+
+  try {
+    const response = await fetch(`/yukle/${PROYE_ID}/excel`, {
+      method: 'POST',
+      body: formData
+    });
+    const data = await response.json();
+    modal.hide();
+
+    if (data.success) {
+      yuklenenDosyaBilgileri = data.data;
+      eslestirmeArayuzuOlustur(data.data);
+      adimGec(2);
+    } else {
+      alert('Hata: ' + (data.error || 'Yükleme başarısız'));
+    }
+  } catch (err) {
+    modal.hide();
+    alert('Bağlantı hatası: ' + err.message);
+  }
+}
+
+const ALAN_ETIKETLER = {
+  hayvan: {
+    kupeNo: 'Küpe No *', tur: 'Hayvan Türü *', irk: 'Irk',
+    cinsiyet: 'Cinsiyet', dogumTarihi: 'Doğum Tarihi', durum: 'Durum',
+    anneKupeNo: 'Anne Küpe No', il: 'İl', ilce: 'İlçe',
+    mahalle: 'Mahalle/Köy *', isletme: 'İşletme', suru: 'Sürü',
+    isletmeSahibi: 'İşletme Sahibi *', tcKimlikNo: 'TC Kimlik No *'
+  },
+  parsel: {
+    adaNo: 'Ada No', parselNo: 'Parsel No *', yuzolcumu: 'Yüzölçümü (Dekar) *',
+    araziVasfi: 'Arazi Vasfı *', mahalle: 'Mahalle/Köy *',
+    il: 'İl', ilce: 'İlçe', mevkii: 'Mevkii', tapuSayfaNo: 'Tapu Sayfa No', paftaNo: 'Pafta No'
+  },
+  gorevli: {
+    adSoyad: 'Ad Soyad *', unvan: 'Unvan *', gorev: 'Görevi', kurum: 'Kurum'
+  }
+};
+
+function eslestirmeArayuzuOlustur(data) {
+  const container = document.getElementById('eslestirmeAlani');
+  let html = '';
+
+  const tipler = [
+    { key: 'hayvan', label: 'Hayvan Listesi', icon: 'emoji-smile', color: 'success' },
+    { key: 'parsel', label: 'Parsel Listesi', icon: 'map', color: 'primary' },
+    { key: 'gorevli', label: 'Görevli Listesi', icon: 'people', color: 'warning' }
+  ];
+
+  tipler.forEach(tip => {
+    const dosyalar = data[tip.key] || [];
+    if (dosyalar.length === 0) return;
+
+    dosyalar.forEach((dosya, dosyaIdx) => {
+      dosya.sheetler.forEach((sheet, sheetIdx) => {
+        const headers = sheet.headers || [];
+        const tahmin = sheet.tahmin || {};
+        const alanlar = ALAN_ETIKETLER[tip.key];
+
+        html += `<div class="card border-0 shadow-sm mb-4">
+          <div class="card-header border-0 bg-${tip.color} bg-opacity-10 py-3">
+            <h6 class="fw-bold mb-0 text-${tip.color}">
+              <i class="bi bi-${tip.icon} me-2"></i>${tip.label}
+              <span class="fw-normal text-muted small ms-2">— ${dosya.dosyaAdi} / ${sheet.isim}</span>
+            </h6>
+          </div>
+          <div class="card-body p-4">
+            <p class="text-muted small mb-3">Her alan için Excel'deki karşılık gelen sütunu seçin. Yıldızlı alanlar zorunludur. Tahmin edilen eşleştirmeler önceden seçilmiştir.</p>
+            <input type="hidden" class="eslestirme-meta" data-tip="${tip.key}" data-dosya-yolu="${dosya.dosyaYolu}" data-sheet="${sheet.isim}" data-dosya-idx="${dosyaIdx}">
+            <div class="row g-3">`;
+
+        Object.entries(alanlar).forEach(([alan, etiket]) => {
+          const secili = tahmin[alan] || '';
+          html += `<div class="col-md-6">
+            <label class="form-label small fw-semibold">${etiket}</label>
+            <select class="form-select form-select-sm eslestirme-select" data-tip="${tip.key}" data-alan="${alan}" data-dosya-yolu="${dosya.dosyaYolu}" data-sheet="${sheet.isim}">
+              <option value="">— Boş Bırak —</option>
+              ${headers.map(h => `<option value="${h.baslik}" ${h.baslik === secili ? 'selected' : ''}>${h.baslik}</option>`).join('')}
+            </select>
+          </div>`;
+        });
+
+        html += `</div></div></div>`;
+      });
+    });
+  });
+
+  container.innerHTML = html || '<div class="alert alert-warning">Hiç dosya yüklenmedi.</div>';
+}
+
+function eslestirmeOnayla() {
+  // Eşleştirme verilerini topla
+  const eslestirmeler = { hayvan: [], parsel: [], gorevli: [] };
+  const gruplar = {};
+
+  document.querySelectorAll('.eslestirme-select').forEach(sel => {
+    const tip = sel.dataset.tip;
+    const alan = sel.dataset.alan;
+    const dosyaYolu = sel.dataset.dosyaYolu;
+    const sheet = sel.dataset.sheet;
+    const anahtar = `${tip}_${dosyaYolu}_${sheet}`;
+
+    if (!gruplar[anahtar]) {
+      gruplar[anahtar] = { tip, dosyaYolu, sheetIsim: sheet, eslestirme: {} };
+    }
+    if (sel.value) {
+      gruplar[anahtar].eslestirme[alan] = sel.value;
+    }
+  });
+
+  Object.values(gruplar).forEach(g => {
+    eslestirmeler[g.tip].push({ dosyaYolu: g.dosyaYolu, sheetIsim: g.sheetIsim, eslestirme: g.eslestirme });
+  });
+
+  adimGec(3);
+
+  fetch(`/yukle/${PROYE_ID}/kaydet`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ eslestirmeler })
+  })
+  .then(r => r.json())
+  .then(data => {
+    document.getElementById('kayitDurumu').classList.add('d-none');
+    document.getElementById('kayitSonucu').classList.remove('d-none');
+
+    if (data.success) {
+      document.getElementById('kayitBaslik').textContent = '✅ Veriler Başarıyla Kaydedildi';
+      document.getElementById('kayitDetay').textContent = data.mesaj;
+    } else {
+      document.getElementById('kayitBaslik').textContent = '❌ Kayıt Hatası';
+      document.getElementById('kayitDetay').textContent = data.error;
+    }
+  })
+  .catch(err => {
+    document.getElementById('kayitDurumu').classList.add('d-none');
+    document.getElementById('kayitSonucu').classList.remove('d-none');
+    document.getElementById('kayitBaslik').textContent = '❌ Bağlantı Hatası';
+    document.getElementById('kayitDetay').textContent = err.message;
+  });
+}
+
+function adimGec(adim) {
+  [1,2,3].forEach(a => {
+    document.getElementById(`step${a}`).classList.toggle('d-none', a !== adim);
+    const badge = document.getElementById(`step${a}badge`);
+    badge?.classList.toggle('active', a === adim);
+    badge?.classList.toggle('completed', a < adim);
+  });
+}
+
+function geriDon(adim) {
+  adimGec(adim);
+}
+</script>

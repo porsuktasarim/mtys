@@ -1,0 +1,237 @@
+<div class="row justify-content-center">
+  <div class="col-lg-7">
+    <div class="mb-4">
+      <h4 class="fw-bold mb-1">
+        <i class="bi bi-<%= proje ? 'pencil' : 'plus-circle' %> me-2 text-primary"></i>
+        <%= proje ? 'Projeyi Düzenle' : 'Yeni Proje Oluştur' %>
+      </h4>
+      <p class="text-muted mb-0 small">Mera tahsis çalışması için proje bilgilerini girin.</p>
+    </div>
+
+    <div class="card border-0 shadow-sm">
+      <div class="card-body p-4">
+        <form action="<%= proje ? `/projeler/${proje._id}?_method=PUT` : '/projeler' %>" method="POST">
+
+          <div class="mb-4">
+            <label class="form-label fw-semibold">Proje Adı <span class="text-danger">*</span></label>
+            <input type="text" name="ad" class="form-control form-control-lg"
+              placeholder="Örn: Karacaköy Mera Tahsis Çalışması"
+              value="<%= proje ? proje.ad : '' %>" required>
+          </div>
+
+          <div class="row g-3 mb-4">
+            <div class="col-md-5">
+              <label class="form-label fw-semibold">İl <span class="text-danger">*</span></label>
+              <input type="text" name="il" id="ilInput" class="form-control"
+                placeholder="Örn: Konya"
+                value="<%= proje ? proje.il : '' %>" required autocomplete="off">
+              <div id="ilOneri" class="list-group position-absolute shadow-sm" style="z-index:1000;display:none;max-height:200px;overflow-y:auto;width:220px;"></div>
+            </div>
+            <div class="col-md-5">
+              <label class="form-label fw-semibold">İlçe <span class="text-danger">*</span></label>
+              <input type="text" name="ilce" class="form-control" placeholder="Örn: Karatay"
+                value="<%= proje ? proje.ilce : '' %>" required>
+            </div>
+            <div class="col-md-2">
+              <label class="form-label fw-semibold">Yıl</label>
+              <input type="number" name="yil" class="form-control" min="2000" max="2100"
+                value="<%= proje ? proje.yil : new Date().getFullYear() %>">
+            </div>
+          </div>
+
+          <!-- Mera Parametreleri -->
+          <div class="card bg-light border-0 mb-4">
+            <div class="card-body p-3">
+              <h6 class="fw-semibold mb-1">
+                <i class="bi bi-graph-up me-2 text-success"></i>Mera Parametreleri
+                <span class="text-muted fw-normal small ms-1">(EK-1 / EK-2)</span>
+              </h6>
+              <p class="text-muted small mb-3">İl girildiğinde yağış kuşağı otomatik belirlenir.</p>
+
+              <div class="row g-3">
+                <!-- Yağış Kuşağı -->
+                <div class="col-md-6">
+                  <label class="form-label small fw-semibold">Yağış Kuşağı (mm)</label>
+                  <select name="yagisKusagi" id="yagisKusagi" class="form-select">
+                    <% const kusak = proje ? proje.yagisKusagi : '350-500'; %>
+                    <option value="200-350"   <%= kusak === '200-350'   ? 'selected':'' %>>200 – 350 mm</option>
+                    <option value="350-500"   <%= kusak === '350-500'   ? 'selected':'' %>>350 – 500 mm</option>
+                    <option value="500-650"   <%= kusak === '500-650'   ? 'selected':'' %>>500 – 650 mm</option>
+                    <option value="650-800"   <%= kusak === '650-800'   ? 'selected':'' %>>650 – 800 mm</option>
+                    <option value="800-950"   <%= kusak === '800-950'   ? 'selected':'' %>>800 – 950 mm</option>
+                    <option value="950-1100"  <%= kusak === '950-1100'  ? 'selected':'' %>>950 – 1100 mm</option>
+                    <option value="1100-1250" <%= kusak === '1100-1250' ? 'selected':'' %>>1100 – 1250 mm</option>
+                  </select>
+                  <div class="form-text" id="yagisKaynagi"></div>
+                </div>
+
+                <!-- Mera Vasfı -->
+                <div class="col-md-6">
+                  <label class="form-label small fw-semibold">Mera Vasfı</label>
+                  <select name="meraVasfi" id="meraVasfi" class="form-select">
+                    <% const vasif = proje ? proje.meraVasfi : 'orta'; %>
+                    <option value="çok iyi" <%= vasif === 'çok iyi' ? 'selected':'' %>>Çok İyi</option>
+                    <option value="iyi"     <%= vasif === 'iyi'     ? 'selected':'' %>>İyi</option>
+                    <option value="orta"    <%= vasif === 'orta'    ? 'selected':'' %>>Orta</option>
+                    <option value="zayıf"   <%= vasif === 'zayıf'   ? 'selected':'' %>>Zayıf</option>
+                  </select>
+                </div>
+
+                <!-- Otlatma Süresi -->
+                <div class="col-md-4">
+                  <label class="form-label small fw-semibold">Otlatma Süresi</label>
+                  <div class="input-group">
+                    <input type="number" name="otlatmaSuresi" id="otlatmaSuresi" class="form-control"
+                      step="1" min="30" max="365"
+                      value="<%= proje ? proje.otlatmaSuresi : 180 %>">
+                    <span class="input-group-text small">gün</span>
+                  </div>
+                </div>
+
+                <!-- Ot Verimi Önizleme -->
+                <div class="col-md-8">
+                  <label class="form-label small fw-semibold">Hesaplanan Ot Verimleri (EK-1)</label>
+                  <div class="table-responsive">
+                    <table class="table table-sm table-bordered mb-0" style="font-size:12px;">
+                      <thead class="table-success">
+                        <tr>
+                          <th>Yararlanılabilir Yeşil Ot</th>
+                          <th>Üretilen Kuru Ot</th>
+                          <th>Yararlanılabilir Kuru Ot</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td id="prev_yYesil">—</td>
+                          <td id="prev_uKuru">—</td>
+                          <td id="prev_yKuru" class="fw-bold text-success">—</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                  <div class="form-text">Kapasite = (Alan × Yar. Kuru Ot) ÷ (12,5 kg/gün × Süre)</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mb-4">
+            <label class="form-label fw-semibold">Açıklama</label>
+            <textarea name="aciklama" class="form-control" rows="2"
+              placeholder="İsteğe bağlı notlar..."><%= proje ? proje.aciklama : '' %></textarea>
+          </div>
+
+          <div class="d-flex gap-3">
+            <button type="submit" class="btn btn-primary btn-lg px-5">
+              <i class="bi bi-check-circle me-2"></i>
+              <%= proje ? 'Güncelle' : 'Proje Oluştur' %>
+            </button>
+            <a href="/projeler" class="btn btn-outline-secondary btn-lg px-4">İptal</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// EK-2: İl → Yağış kuşağı
+const IL_YAGIS = {
+  'ADANA':'650-800','ADIYAMAN':'650-800','AFYON':'350-500','AĞRI':'500-650',
+  'AMASYA':'350-500','ANKARA':'350-500','ANTALYA':'950-1100','ARTVİN':'650-800',
+  'AYDIN':'650-800','BALIKESİR':'500-650','BİLECİK':'350-500','BİNGÖL':'800-950',
+  'BİTLİS':'1100-1250','BOLU':'500-650','BURDUR':'350-500','BURSA':'650-800',
+  'ÇANAKKALE':'500-650','ÇANKIRI':'350-500','ÇORUM':'350-500','DENİZLİ':'500-650',
+  'DİYARBAKIR':'350-500','EDİRNE':'500-650','ELAZIĞ':'350-500','ERZİNCAN':'350-500',
+  'ERZURUM':'350-500','ESKİŞEHİR':'350-500','GAZİANTEP':'500-650','GİRESUN':'1100-1250',
+  'GÜMÜŞHANE':'350-500','HAKKARİ':'650-800','HATAY':'1100-1250','ISPARTA':'500-650',
+  'MERSİN':'500-650','İSTANBUL':'800-950','İZMİR':'650-800','KARS':'500-650',
+  'KASTAMONU':'350-500','KAYSERİ':'350-500','KIRKLARELİ':'500-650','KIRŞEHİR':'350-500',
+  'KOCAELİ':'800-950','KONYA':'200-350','KÜTAHYA':'500-650','MALATYA':'350-500',
+  'MANİSA':'650-800','K.MARAŞ':'650-800','KAHRAMANMARAŞ':'650-800','MARDİN':'650-800',
+  'MUĞLA':'1100-1250','MUŞ':'650-800','NEVŞEHİR':'350-500','NİĞDE':'200-350',
+  'ORDU':'950-1100','RİZE':'1100-1250','SAKARYA':'800-950','SAMSUN':'650-800',
+  'SİİRT':'650-800','SİNOP':'650-800','SİVAS':'350-500','TEKİRDAĞ':'500-650',
+  'TOKAT':'350-500','TRABZON':'800-950','TUNCELİ':'800-950','ŞANLIURFA':'350-500',
+  'UŞAK':'500-650','VAN':'350-500','YOZGAT':'500-650','ZONGULDAK':'1100-1250',
+  'AKSARAY':'200-350','BAYBURT':'350-500','KARAMAN':'200-350','KIRIKKALE':'350-500',
+  'BATMAN':'350-500','ŞIRNAK':'650-800','BARTIN':'950-1100','ARDAHAN':'500-650',
+  'IĞDIR':'200-350','YALOVA':'650-800','KARABÜK':'350-500','KİLİS':'350-500',
+  'OSMANİYE':'800-950','DÜZCE':'800-950',
+};
+
+// EK-1 Tablo-1: Yararlanılabilir Yeşil Ot (kg/da)
+const Y_YESIL = {
+  '200-350':{'çok iyi':180,'iyi':135,'orta':90,'zayıf':45},
+  '350-500':{'çok iyi':270,'iyi':225,'orta':135,'zayıf':68},
+  '500-650':{'çok iyi':360,'iyi':270,'orta':180,'zayıf':90},
+  '650-800':{'çok iyi':450,'iyi':338,'orta':225,'zayıf':113},
+  '800-950':{'çok iyi':540,'iyi':405,'orta':270,'zayıf':135},
+  '950-1100':{'çok iyi':630,'iyi':473,'orta':315,'zayıf':158},
+  '1100-1250':{'çok iyi':720,'iyi':540,'orta':360,'zayıf':180},
+};
+// EK-1 Tablo-3: Üretilen Kuru Ot (kg/da)
+const U_KURU = {
+  '200-350':{'çok iyi':90,'iyi':67.5,'orta':45,'zayıf':22.5},
+  '350-500':{'çok iyi':135,'iyi':112.5,'orta':67.5,'zayıf':34},
+  '500-650':{'çok iyi':180,'iyi':135,'orta':90,'zayıf':45},
+  '650-800':{'çok iyi':225,'iyi':169,'orta':112.5,'zayıf':56.5},
+  '800-950':{'çok iyi':270,'iyi':202.5,'orta':135,'zayıf':67.5},
+  '950-1100':{'çok iyi':315,'iyi':236.5,'orta':157.5,'zayıf':79},
+  '1100-1250':{'çok iyi':360,'iyi':270,'orta':180,'zayıf':90},
+};
+
+function guncelle() {
+  const kusak = document.getElementById('yagisKusagi').value;
+  const vasif = document.getElementById('meraVasfi').value;
+  const sure  = parseInt(document.getElementById('otlatmaSuresi').value) || 180;
+
+  const yy = (Y_YESIL[kusak] || {})[vasif] || '—';
+  const uk = (U_KURU[kusak]  || {})[vasif] || 0;
+  const yk = uk ? (uk * 0.5).toFixed(1) : '—';
+
+  document.getElementById('prev_yYesil').textContent = yy + (yy !== '—' ? ' kg/da' : '');
+  document.getElementById('prev_uKuru').textContent  = uk + (uk ? ' kg/da' : '—');
+  document.getElementById('prev_yKuru').textContent  = yk + (yk !== '—' ? ' kg/da' : '');
+}
+
+// İl otomatik tamamlama
+const ilListesi = Object.keys(IL_YAGIS);
+const ilInput = document.getElementById('ilInput');
+const ilOneri = document.getElementById('ilOneri');
+
+ilInput.addEventListener('input', function() {
+  const q = this.value.toUpperCase().trim();
+  ilOneri.innerHTML = '';
+  if (q.length < 1) { ilOneri.style.display='none'; return; }
+  const eslesler = ilListesi.filter(il => il.startsWith(q)).slice(0, 8);
+  if (eslesler.length === 0) { ilOneri.style.display='none'; return; }
+  eslesler.forEach(il => {
+    const a = document.createElement('a');
+    a.href = '#';
+    a.className = 'list-group-item list-group-item-action py-1 small';
+    a.textContent = il + ' (' + IL_YAGIS[il] + ' mm)';
+    a.addEventListener('click', function(e) {
+      e.preventDefault();
+      ilInput.value = il.charAt(0) + il.slice(1).toLowerCase();
+      ilOneri.style.display = 'none';
+      // Yağış kuşağını otomatik seç
+      const kusak = IL_YAGIS[il];
+      document.getElementById('yagisKusagi').value = kusak;
+      document.getElementById('yagisKaynagi').textContent = '✓ EK-2\'den otomatik belirlendi: ' + kusak + ' mm';
+      guncelle();
+    });
+    ilOneri.appendChild(a);
+  });
+  ilOneri.style.display = 'block';
+});
+
+document.addEventListener('click', (e) => {
+  if (e.target !== ilInput) ilOneri.style.display = 'none';
+});
+
+document.getElementById('yagisKusagi').addEventListener('change', guncelle);
+document.getElementById('meraVasfi').addEventListener('change', guncelle);
+document.getElementById('otlatmaSuresi').addEventListener('input', guncelle);
+guncelle();
+</script>

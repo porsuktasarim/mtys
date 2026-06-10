@@ -1,0 +1,398 @@
+<div class="d-flex justify-content-between align-items-start mb-4 flex-wrap gap-3">
+  <div>
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb small mb-1">
+        <li class="breadcrumb-item"><a href="/projeler">Projeler</a></li>
+        <li class="breadcrumb-item active"><%= proje.ad %></li>
+      </ol>
+    </nav>
+    <h4 class="fw-bold mb-1">
+      <i class="bi bi-tree-fill me-2 text-success"></i><%= proje.ad %>
+    </h4>
+    <p class="text-muted mb-0">
+      <i class="bi bi-geo-alt me-1"></i><%= proje.il %> / <%= proje.ilce %> &bull;
+      <span class="text-primary fw-semibold"><%= proje.yil %></span> &bull;
+      <span class="badge bg-<%= proje.durum === 'tamamlandi' ? 'success' : proje.durum === 'hesaplandi' ? 'primary' : 'secondary' %>">
+        <%= proje.durum === 'tamamlandi' ? 'Tamamlandı' : proje.durum === 'hesaplandi' ? 'Hesaplandı' : 'Taslak' %>
+      </span>
+    </p>
+  </div>
+  <div class="d-flex gap-2 flex-wrap">
+    <a href="/yukle/<%= proje._id %>" class="btn btn-outline-primary">
+      <i class="bi bi-upload me-2"></i>Veri Yükle
+    </a>
+    <a href="/projeler/<%= proje._id %>/duzenle" class="btn btn-outline-secondary">
+      <i class="bi bi-pencil me-2"></i>Düzenle
+    </a>
+    <form action="/projeler/<%= proje._id %>?_method=DELETE" method="POST" class="d-inline"
+      onsubmit="return confirm('Projeyi ve tüm verilerini silmek istediğinizden emin misiniz?')">
+      <button type="submit" class="btn btn-outline-danger">
+        <i class="bi bi-trash me-2"></i>Sil
+      </button>
+    </form>
+  </div>
+</div>
+
+<!-- İstatistik Kartları -->
+<div class="row g-3 mb-4">
+  <div class="col-6 col-md-3">
+    <div class="card border-0 shadow-sm h-100">
+      <div class="card-body p-3 text-center">
+        <div class="display-6 fw-bold text-success"><%= hayvanSayisi.toLocaleString('tr-TR') %></div>
+        <div class="text-muted small mt-1"><i class="bi bi-emoji-smile me-1"></i>Hayvan Kaydı</div>
+      </div>
+    </div>
+  </div>
+  <div class="col-6 col-md-3">
+    <div class="card border-0 shadow-sm h-100">
+      <div class="card-body p-3 text-center">
+        <div class="display-6 fw-bold text-primary"><%= parselSayisi %></div>
+        <div class="text-muted small mt-1"><i class="bi bi-map me-1"></i>Parsel</div>
+      </div>
+    </div>
+  </div>
+  <div class="col-6 col-md-3">
+    <div class="card border-0 shadow-sm h-100">
+      <div class="card-body p-3 text-center">
+        <div class="display-6 fw-bold text-warning"><%= gorevliSayisi %></div>
+        <div class="text-muted small mt-1"><i class="bi bi-people me-1"></i>Görevli</div>
+      </div>
+    </div>
+  </div>
+  <div class="col-6 col-md-3">
+    <div class="card border-0 shadow-sm h-100">
+      <div class="card-body p-3 text-center">
+        <div class="display-6 fw-bold text-info"><%= tumMahalleler.length %></div>
+        <div class="text-muted small mt-1"><i class="bi bi-geo me-1"></i>Mahalle</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row g-4">
+  <!-- Sol kolon - Hesaplama Paneli -->
+  <div class="col-lg-5">
+    <!-- Mahalle Seçimi ve Hesaplama -->
+    <div class="card border-0 shadow-sm mb-4">
+      <div class="card-header border-0 bg-primary bg-gradient text-white py-3">
+        <h6 class="mb-0 fw-semibold">
+          <i class="bi bi-calculator me-2"></i>Hesaplama Başlat
+        </h6>
+      </div>
+      <div class="card-body p-4">
+        <% if (tumMahalleler.length === 0) { %>
+        <div class="text-center py-4">
+          <i class="bi bi-exclamation-circle display-5 text-warning d-block mb-3 opacity-50"></i>
+          <p class="text-muted small mb-3">Hesaplama yapabilmek için önce veri yükleyin.</p>
+          <a href="/yukle/<%= proje._id %>" class="btn btn-warning btn-sm">
+            <i class="bi bi-upload me-2"></i>Veri Yükle
+          </a>
+        </div>
+        <% } else { %>
+        <div class="mb-3">
+          <label class="form-label fw-semibold small">Köy / Mahalle Seçimi</label>
+
+          <div class="form-check mb-2">
+            <input class="form-check-input" type="checkbox" id="tumMahallelerCk" name="tumMahallelerCk">
+            <label class="form-check-label fw-semibold text-primary" for="tumMahallelerCk">
+              Tüm Mahalleler
+            </label>
+          </div>
+
+          <div id="mahallelerListesi" class="border rounded p-2 bg-light" style="max-height: 200px; overflow-y: auto;">
+            <% tumMahalleler.forEach(m => { %>
+            <div class="form-check">
+              <input class="form-check-input mahalle-cb" type="checkbox" name="mahalleler" value="<%= m %>" id="m_<%= m.replace(/\s/g,'_') %>">
+              <label class="form-check-label small" for="m_<%= m.replace(/\s/g,'_') %>"><%= m %></label>
+            </div>
+            <% }) %>
+          </div>
+        </div>
+
+        <% if (typeof sahipListesi !== 'undefined' && sahipListesi.length > 0) { %>
+        <!-- İşletme Sahibi Seçimi -->
+        <div class="mb-3">
+          <label class="form-label fw-semibold small">
+            İşletme Sahibi Seçimi
+            <span class="badge bg-secondary ms-1"><%= sahipListesi.length %> kişi/firma</span>
+          </label>
+          <div class="d-flex gap-2 mb-2">
+            <button type="button" class="btn btn-xs btn-outline-success" onclick="tumKisileriSec(true)">Tüm Kişiler</button>
+            <button type="button" class="btn btn-xs btn-outline-secondary" onclick="tumunuKaldir()">Tümünü Kaldır</button>
+          </div>
+          <div class="border rounded p-2 bg-light" style="max-height:180px;overflow-y:auto;">
+            <% sahipListesi.forEach(s => { %>
+            <div class="form-check">
+              <input class="form-check-input sahip-cb" type="checkbox"
+                value="<%= s._id %>"
+                id="s_<%= s._id ? s._id.replace(/\s/g,'_') : 'x' %>"
+                <%= !s.firmaFlag ? 'checked' : '' %>>
+              <label class="form-check-label small d-flex align-items-center gap-1"
+                for="s_<%= s._id ? s._id.replace(/\s/g,'_') : 'x' %>">
+                <% if (s.firmaFlag) { %>
+                  <span class="badge bg-warning text-dark" style="font-size:9px">Firma</span>
+                <% } else { %>
+                  <span class="badge bg-success" style="font-size:9px">Kişi</span>
+                <% } %>
+                <%= s._id || 'Bilinmiyor' %>
+                <span class="text-muted ms-auto">(<%= s.hayvanSayisi %>)</span>
+              </label>
+            </div>
+            <% }) %>
+          </div>
+        </div>
+        <% } %>
+
+        <button id="btnHesapla" class="btn btn-primary w-100" onclick="hesaplamaBaslat('<%= proje._id %>')">
+          <i class="bi bi-play-circle me-2"></i>Hesaplamayı Başlat
+        </button>
+        <% } %>
+      </div>
+    </div>
+
+    <!-- Teknik Parametreler -->
+    <div class="card border-0 shadow-sm">
+      <div class="card-header border-0 bg-transparent py-3">
+        <h6 class="mb-0 fw-semibold text-muted">
+          <i class="bi bi-sliders me-2"></i>Proje Parametreleri
+        </h6>
+      </div>
+      <div class="card-body p-3">
+        <div class="d-flex justify-content-between py-2 border-bottom small">
+          <span class="text-muted">Yağış Kuşağı</span>
+          <span class="fw-semibold"><%= proje.yagisKusagi || '-' %></span>
+        </div>
+        <div class="d-flex justify-content-between py-2 border-bottom small">
+          <span class="text-muted">Mera Vasfı</span>
+          <span class="fw-semibold"><%= proje.meraVasfi || '-' %></span>
+        </div>
+        <div class="d-flex justify-content-between py-2 small">
+          <span class="text-muted">Otlatma Süresi</span>
+          <span class="fw-semibold"><%= proje.otlatmaSuresi %> gün</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sağ kolon - Hesaplama Sonuçları -->
+  <div class="col-lg-7">
+    <div class="card border-0 shadow-sm">
+      <div class="card-header border-0 bg-transparent py-3 d-flex justify-content-between align-items-center">
+        <h6 class="mb-0 fw-semibold text-muted">
+          <i class="bi bi-list-check me-2"></i>Hesaplama Sonuçları
+        </h6>
+        <% if (hesaplamalar.length > 0) { %>
+        <a href="/export/<%= proje._id %>" class="btn btn-sm btn-success">
+          <i class="bi bi-download me-1"></i>Tümünü İndir
+        </a>
+        <% } %>
+      </div>
+      <div class="card-body p-0">
+        <% if (hesaplamalar.length === 0) { %>
+        <div class="text-center py-5">
+          <i class="bi bi-clipboard-data display-4 text-muted opacity-25 d-block mb-3"></i>
+          <p class="text-muted small">Henüz hesaplama yapılmamış.</p>
+        </div>
+        <% } else { %>
+        <div class="table-responsive">
+          <table class="table table-hover mb-0 align-middle">
+            <thead class="table-light">
+              <tr class="small">
+                <th class="ps-4">Mahalle</th>
+                <th class="text-end">BBHB (Mevcut)</th>
+                <th class="text-end">Kapasite (BBHB)</th>
+                <th class="text-end">Durum</th>
+                <th class="text-center">İşlem</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% hesaplamalar.forEach(h => { %>
+              <tr>
+                <td class="ps-4">
+                  <span class="fw-semibold small"><%= h.mahalle %></span>
+                  <br><span class="text-muted" style="font-size:11px"><%= new Date(h.hesaplamaTarihi).toLocaleDateString('tr-TR') %></span>
+                </td>
+                <td class="text-end small">
+                  <%= h.ek4c ? h.ek4c.mevcutBBHB.toFixed(2) : '—' %>
+                </td>
+                <td class="text-end small">
+                  <%= h.ek4c ? h.ek4c.kapasiteBBHB.toFixed(2) : '—' %>
+                </td>
+                <td class="text-end">
+                  <% if (h.ek4c) { %>
+                  <span class="badge bg-<%= h.ek4c.durum === 'fazla' ? 'success' : 'danger' %>">
+                    <%= h.ek4c.durum === 'fazla' ? '✓ Yeterli' : '⚠ Aşım' %>
+                  </span>
+                  <% } %>
+                </td>
+                <td class="text-center">
+                  <div class="d-flex gap-1 justify-content-center">
+                    <a href="/hesapla/<%= proje._id %>/<%= encodeURIComponent(h.mahalle) %>"
+                      class="btn btn-xs btn-outline-primary" title="Detay" style="font-size:11px;padding:2px 8px;">
+                      <i class="bi bi-eye"></i>
+                    </a>
+                    <a href="/export/<%= proje._id %>/<%= encodeURIComponent(h.mahalle) %>"
+                      class="btn btn-xs btn-outline-success" title="Excel İndir" style="font-size:11px;padding:2px 8px;">
+                      <i class="bi bi-download"></i>
+                    </a>
+                  </div>
+                </td>
+              </tr>
+              <% }) %>
+            </tbody>
+          </table>
+        </div>
+        <% } %>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Parsel Verim Durumu Kartı -->
+<% if (typeof parseller !== 'undefined' && parseller && parseller.length > 0) { %>
+<div class="row mt-4">
+  <div class="col-12">
+    <div class="card border-0 shadow-sm">
+      <div class="card-header border-0 bg-transparent py-3 d-flex justify-content-between align-items-center">
+        <h6 class="mb-0 fw-semibold text-muted">
+          <i class="bi bi-map me-2"></i>Parsel Verim Durumları
+          <span class="badge bg-secondary ms-2"><%= parseller.length %> parsel</span>
+        </h6>
+        <small class="text-muted">Her parsel için EK-1 verim durumu seçin — kapasite parsel bazında hesaplanır</small>
+      </div>
+      <div class="card-body p-0">
+        <div class="table-responsive">
+          <table class="table table-hover table-sm mb-0 align-middle">
+            <thead class="table-light">
+              <tr class="small">
+                <th class="ps-3">Ada/Parsel</th>
+                <th>Mahalle</th>
+                <th>Mevkii</th>
+                <th class="text-end">Alan (da)</th>
+                <th>Arazi Vasfı</th>
+                <th style="min-width:160px;">Verim Durumu (EK-1)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% parseller.forEach(p => { %>
+              <tr>
+                <td class="ps-3 small fw-semibold"><%= (p.adaNo || '-') + '/' + p.parselNo %></td>
+                <td class="small"><%= p.mahalle || '-' %></td>
+                <td class="small text-muted"><%= p.mevkii || '-' %></td>
+                <td class="text-end small"><%= (p.yuzolcumu || 0).toLocaleString('tr-TR') %></td>
+                <td class="small"><%= p.araziVasfi || '-' %></td>
+                <td>
+                  <select class="form-select form-select-sm verim-select"
+                    data-parsel-id="<%= p._id %>"
+                    onchange="verimGuncelle(this)">
+                    <option value="" <%= !p.verimDurumu ? 'selected' : '' %>>— Proje varsayılanı (<%= proje.meraVasfi || 'orta' %>)</option>
+                    <option value="çok iyi" <%= p.verimDurumu === 'çok iyi' ? 'selected' : '' %>>⭐⭐⭐⭐ Çok İyi</option>
+                    <option value="iyi"     <%= p.verimDurumu === 'iyi'     ? 'selected' : '' %>>⭐⭐⭐ İyi</option>
+                    <option value="orta"    <%= p.verimDurumu === 'orta'    ? 'selected' : '' %>>⭐⭐ Orta</option>
+                    <option value="zayıf"   <%= p.verimDurumu === 'zayıf'   ? 'selected' : '' %>>⭐ Zayıf</option>
+                  </select>
+                </td>
+              </tr>
+              <% }) %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<% } %>
+
+<!-- Progress Modal -->
+<div class="modal fade" id="hesaplamaModal" tabindex="-1" data-bs-backdrop="static">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-body text-center p-5">
+        <div class="spinner-border text-primary mb-3" role="status" style="width:3rem;height:3rem;"></div>
+        <h5 class="fw-semibold mb-2">Hesaplama Yapılıyor...</h5>
+        <p class="text-muted small mb-0" id="hesaplamaAciklama">Veriler işleniyor, lütfen bekleyin.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function hesaplamaBaslat(projeId) {
+  const seciliMahalleler = [...document.querySelectorAll('.mahalle-cb:checked')].map(cb => cb.value);
+  const tumMahallelerCk = document.getElementById('tumMahallelerCk');
+  const seciliSahipler = [...document.querySelectorAll('.sahip-cb:checked')].map(cb => cb.value);
+
+  const modal = new bootstrap.Modal(document.getElementById('hesaplamaModal'));
+  modal.show();
+
+  const body = new URLSearchParams();
+  if (tumMahallelerCk && tumMahallelerCk.checked) {
+    body.append('tumMahalleler', 'true');
+  } else {
+    seciliMahalleler.forEach(m => body.append('mahalleler', m));
+  }
+  seciliSahipler.forEach(s => body.append('seciliSahipler', s));
+
+  fetch(`/hesapla/${projeId}`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: body.toString()
+  })
+  .then(r => r.json())
+  .then(data => {
+    modal.hide();
+    if (data.success) {
+      const hataMsg = data.hatalar && data.hatalar.length > 0 ?
+        `\n\nUyarılar:\n${data.hatalar.map(h => `${h.mahalle}: ${h.hata}`).join('\n')}` : '';
+      alert(`✅ ${data.mesaj}${hataMsg}`);
+      window.location.reload();
+    } else {
+      alert('❌ Hata: ' + (data.error || 'Bilinmeyen hata'));
+    }
+  })
+  .catch(err => {
+    modal.hide();
+    alert('❌ Bağlantı hatası: ' + err.message);
+  });
+}
+
+function tumKisileriSec(sadecKisi) {
+  document.querySelectorAll('.sahip-cb').forEach(cb => {
+    const label = cb.closest('.form-check').querySelector('label');
+    const firmaFlag = label && label.querySelector('.bg-warning') !== null;
+    cb.checked = sadecKisi ? !firmaFlag : true;
+  });
+}
+
+function tumunuKaldir() {
+  document.querySelectorAll('.sahip-cb').forEach(cb => cb.checked = false);
+}
+
+async function verimGuncelle(select) {
+  const parselId = select.dataset.parselId;
+  const verimDurumu = select.value;
+  try {
+    const r = await fetch(`/api/parseller/${parselId}/verim`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ verimDurumu })
+    });
+    const data = await r.json();
+    if (data.success) {
+      select.classList.add('border-success');
+      setTimeout(() => select.classList.remove('border-success'), 1500);
+    } else {
+      alert('Güncelleme hatası: ' + data.error);
+    }
+  } catch (e) {
+    alert('Bağlantı hatası: ' + e.message);
+  }
+}
+
+document.getElementById('tumMahallelerCk')?.addEventListener('change', function() {
+  document.querySelectorAll('.mahalle-cb').forEach(cb => {
+    cb.checked = this.checked;
+    cb.disabled = this.checked;
+  });
+});
+</script>
